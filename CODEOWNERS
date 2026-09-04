@@ -7,5 +7,8 @@
 /CLAUDE.md               @Oliver-ke
 /CODEOWNERS              @Oliver-ke
 /app/tests/acceptance/   @Oliver-ke
+/app/CLAUDE.md           @Oliver-ke
+/app/AGENTS.md           @Oliver-ke
 /package.json            @Oliver-ke
 /package-lock.json       @Oliver-ke
+/app/package.json        @Oliver-ke

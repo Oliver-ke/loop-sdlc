@@ -9,10 +9,11 @@ You are running unattended in CI. One run does one task, opens one pull request,
   smaller follow-up task files with `Status: proposed`, mark nothing done, and stop.
 
 ## Never touch
-`.github/`, `infra/`, `harness/`, `CLAUDE.md`, `CODEOWNERS`, `package.json`,
-`package-lock.json`, `app/vitest.config.mts`, `app/vitest.setup.ts`,
-`app/tests/acceptance/`. CI fails your pull request if you do. If a task seems to
-need one of these changed, file a follow-up task and stop.
+`.github/`, `infra/`, `harness/`, `app/tests/acceptance/`, `CLAUDE.md`, `CODEOWNERS`,
+`app/CLAUDE.md`, `app/AGENTS.md`, `package.json`, `package-lock.json`,
+`app/package.json`, `app/vitest.config.mts`, `app/vitest.setup.ts`. CI fails your
+pull request if you do. If a task seems to need one of these changed, file a
+follow-up task and stop.
 
 If you need a new dependency, you cannot add one. File a follow-up task and stop.
 

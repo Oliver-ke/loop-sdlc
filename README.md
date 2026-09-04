@@ -57,7 +57,7 @@ workflow file survives somewhere.
 | Runner minutes | GitHub billing → Actions spending limit |
 
 ## What the agent may not change
-`.github/`, `infra/`, `harness/`, `CLAUDE.md`, `CODEOWNERS`, `package.json`,
-`package-lock.json`, the Vitest config, and `app/tests/acceptance/`. The list lives in
-`harness/src/protected.mjs` and is enforced by the required `pr-rules` check — not only by
-CODEOWNERS review.
+`.github/`, `infra/`, `harness/`, `app/tests/acceptance/`, `CLAUDE.md`, `CODEOWNERS`,
+`app/CLAUDE.md`, `app/AGENTS.md`, `package.json`, `package-lock.json`, `app/package.json`,
+and the Vitest config. The list lives in `harness/src/protected.mjs` and is enforced by the
+required `pr-rules` check — not only by CODEOWNERS review.

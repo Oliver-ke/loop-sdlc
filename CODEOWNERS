@@ -1,5 +1,7 @@
-# Review gate on the guardrails. The machine-checked enforcement is the `pr-rules`
-# status check (harness/src/protected.mjs); this file is the second layer.
+# Declared intent for the guardrail paths. The machine-checked enforcement is the
+# `pr-rules` status check (harness/src/protected.mjs). With zero required approving
+# reviews this file demands no review today — it becomes a real gate the moment a
+# second person or bot has write access.
 *                        @Oliver-ke
 /.github/                @Oliver-ke
 /infra/                  @Oliver-ke
@@ -12,3 +14,5 @@
 /package.json            @Oliver-ke
 /package-lock.json       @Oliver-ke
 /app/package.json        @Oliver-ke
+/app/vitest.config.mts   @Oliver-ke
+/app/vitest.setup.ts     @Oliver-ke

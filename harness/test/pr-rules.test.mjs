@@ -180,4 +180,19 @@ describe('checkPullRequest', () => {
     );
     assert.match(result.violations[0].message, /could not be parsed/);
   });
+
+  it('rejects marking a task done after rewriting the "Done when" items in the same pull request', () => {
+    const result = checkPullRequest(
+      bot({
+        taskChanges: [
+          {
+            id: '0001',
+            before: taskText({ done: ['- [ ] the original criterion'] }),
+            after: taskText({ status: 'done', done: ['- [x] a much easier criterion'] }),
+          },
+        ],
+      }),
+    );
+    assert.match(result.violations[0].message, /"Done when" items were rewritten/);
+  });
 });

@@ -80,6 +80,19 @@ export function checkPullRequest(input) {
     }
   }
 
+  for (const { id, before, after } of markedDone) {
+    if (!before) continue;
+    const texts = (task) => task.doneWhen.map((item) => item.text);
+    const wasText = texts(before);
+    const nowText = texts(after);
+    if (wasText.length !== nowText.length || wasText.some((text, i) => text !== nowText[i])) {
+      add(
+        'task-status',
+        `tasks/${id}: the "Done when" items were rewritten in the same pull request that marks the task done — only the checkboxes may change`,
+      );
+    }
+  }
+
   return { enforced: true, violations };
 }
 

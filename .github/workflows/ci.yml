@@ -33,7 +33,12 @@ jobs:
     name: pr-rules
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: github.event_name == 'pull_request'
+    # No job-level `if:`, deliberately. A skipped job SATISFIES a required status
+    # check (GitHub: a required check must be "successful, skipped, or neutral"),
+    # so any condition that skips this job would silently make the guardrail
+    # optional while still showing green. The event test lives in the step below,
+    # which always reports a real conclusion. Never add an `if:` here, and never
+    # add `paths:`/`paths-ignore:` filters to `on:`.
     steps:
       - uses: actions/checkout@v6
         with:
@@ -41,12 +46,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      - name: Fetch the base branch
-        env:
-          BASE_REF: ${{ github.base_ref }}
-        run: git fetch --no-tags origin "$BASE_REF"
       - name: Check guardrails
         env:
+          EVENT: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
-        run: node harness/src/cli/check-pr.mjs --base "origin/$BASE_REF" --author "$PR_AUTHOR"
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "pr-rules: not a pull request event ($EVENT) — nothing to check"
+            exit 0
+          fi
+          git fetch --no-tags origin "$BASE_REF"
+          node harness/src/cli/check-pr.mjs --base "origin/$BASE_REF" --author "$PR_AUTHOR"

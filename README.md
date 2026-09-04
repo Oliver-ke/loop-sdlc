@@ -59,5 +59,9 @@ workflow file survives somewhere.
 ## What the agent may not change
 `.github/`, `infra/`, `harness/`, `app/tests/acceptance/`, `CLAUDE.md`, `CODEOWNERS`,
 `app/CLAUDE.md`, `app/AGENTS.md`, `package.json`, `package-lock.json`, `app/package.json`,
-and the Vitest config. The list lives in `harness/src/protected.mjs` and is enforced by the
-required `pr-rules` check — not only by CODEOWNERS review.
+`app/vitest.config.mts` and `app/vitest.setup.ts`. The list lives in
+`harness/src/protected.mjs` and is enforced by the required `pr-rules` check — not by
+CODEOWNERS review, which zero required approvals makes advisory. `app/CLAUDE.md` and
+`app/AGENTS.md` are on it because `create-next-app` generates them and Claude Code reads
+them every run alongside the root `CLAUDE.md`: any instruction file the agent can edit is
+one it can weaken.

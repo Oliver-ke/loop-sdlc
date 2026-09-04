@@ -1,7 +1,8 @@
 # Declared intent for the guardrail paths. The machine-checked enforcement is the
-# `pr-rules` status check (harness/src/protected.mjs). With zero required approving
-# reviews this file demands no review today — it becomes a real gate the moment a
-# second person or bot has write access.
+# `pr-rules` status check, and `harness/src/protected.mjs` is the AUTHORITATIVE
+# list — this file mirrors it. With zero required approving reviews this file
+# demands no review today — it becomes a real gate the moment a second person or
+# bot has write access.
 *                        @Oliver-ke
 /.github/                @Oliver-ke
 /infra/                  @Oliver-ke
@@ -14,5 +15,30 @@
 /package.json            @Oliver-ke
 /package-lock.json       @Oliver-ke
 /app/package.json        @Oliver-ke
+/.nvmrc                  @Oliver-ke
+
+# Config files are listed at EVERY extension the tool resolves, not just the one
+# in use: a config the agent may add is a config it can use to shadow the one it
+# may not edit.
 /app/vitest.config.mts   @Oliver-ke
+/app/vitest.config.ts    @Oliver-ke
+/app/vitest.config.cts   @Oliver-ke
+/app/vitest.config.js    @Oliver-ke
+/app/vitest.config.cjs   @Oliver-ke
+/app/vitest.config.mjs   @Oliver-ke
 /app/vitest.setup.ts     @Oliver-ke
+/app/vitest.setup.mts    @Oliver-ke
+/app/vitest.setup.js     @Oliver-ke
+/app/vitest.setup.mjs    @Oliver-ke
+/app/tsconfig.json       @Oliver-ke
+/app/eslint.config.mjs   @Oliver-ke
+/app/eslint.config.ts    @Oliver-ke
+/app/eslint.config.js    @Oliver-ke
+/app/eslint.config.cjs   @Oliver-ke
+/app/eslint.config.mts   @Oliver-ke
+/app/eslint.config.cts   @Oliver-ke
+/app/next.config.ts      @Oliver-ke
+/app/next.config.js      @Oliver-ke
+/app/next.config.mjs     @Oliver-ke
+/app/postcss.config.mjs  @Oliver-ke
+/app/postcss.config.js   @Oliver-ke

@@ -11,9 +11,15 @@ You are running unattended in CI. One run does one task, opens one pull request,
 ## Never touch
 `.github/`, `infra/`, `harness/`, `app/tests/acceptance/`, `CLAUDE.md`, `CODEOWNERS`,
 `app/CLAUDE.md`, `app/AGENTS.md`, `package.json`, `package-lock.json`,
-`app/package.json`, `app/vitest.config.mts`, `app/vitest.setup.ts`. CI fails your
-pull request if you do. If a task seems to need one of these changed, file a
-follow-up task and stop.
+`app/package.json`, `app/tsconfig.json`, `.nvmrc`, and **every** extension of
+`app/vitest.config.*`, `app/vitest.setup.*`, `app/eslint.config.*`,
+`app/next.config.*` and `app/postcss.config.*` — including ones that do not exist
+yet, because adding a second config would shadow the protected one.
+`harness/src/protected.mjs` is the authoritative list. CI fails your pull request
+if you touch any of them, including by renaming or deleting one. If a task seems to
+need one of these changed, file a follow-up task and stop.
+
+You also may not delete a task file — only a human may remove a task.
 
 If you need a new dependency, you cannot add one. File a follow-up task and stop.
 

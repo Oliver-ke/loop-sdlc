@@ -52,6 +52,39 @@ describe('isProtectedPath', () => {
   it('does not match a path that merely starts with a protected name', () => {
     assert.equal(isProtectedPath('app/src/harness-notes.md'), false);
   });
+
+  // A config the agent may ADD is a config it can use to shadow the one it may
+  // not EDIT: an added `app/vitest.config.ts` overrides the protected
+  // `app/vitest.config.mts` and can drop `tests/**` from `include`, so
+  // `app/tests/acceptance/` never runs while `verify` stays green. Every
+  // extension each tool resolves must therefore be protected, in use or not.
+  it('protects every extension a tool would resolve, not just the one in use', () => {
+    for (const shadow of [
+      'app/vitest.config.ts',
+      'app/vitest.config.cts',
+      'app/vitest.config.js',
+      'app/vitest.config.cjs',
+      'app/vitest.config.mjs',
+      'app/vitest.setup.mts',
+      'app/vitest.setup.js',
+      'app/vitest.setup.mjs',
+      'app/tsconfig.json',
+      'app/eslint.config.mjs',
+      'app/eslint.config.ts',
+      'app/eslint.config.js',
+      'app/eslint.config.cjs',
+      'app/eslint.config.mts',
+      'app/eslint.config.cts',
+      'app/next.config.ts',
+      'app/next.config.js',
+      'app/next.config.mjs',
+      'app/postcss.config.mjs',
+      'app/postcss.config.js',
+      '.nvmrc',
+    ]) {
+      assert.equal(isProtectedPath(shadow), true, `${shadow} must be protected`);
+    }
+  });
 });
 
 describe('checkPullRequest', () => {
@@ -63,6 +96,42 @@ describe('checkPullRequest', () => {
     });
     assert.equal(result.enforced, false);
     assert.deepEqual(result.violations, []);
+  });
+
+  it('enforces the rules for an unrecognised [bot] author', () => {
+    const result = checkPullRequest(
+      bot({ author: 'someother[bot]', changedFiles: ['harness/src/pr-rules.mjs'] }),
+    );
+    assert.equal(result.enforced, true);
+    assert.deepEqual(
+      result.violations.map((v) => v.rule),
+      ['protected-path'],
+    );
+  });
+
+  it('does not enforce anything for a human login that is not in the bot list', () => {
+    const result = checkPullRequest(
+      bot({ author: 'some-contributor', changedFiles: ['harness/src/pr-rules.mjs'] }),
+    );
+    assert.equal(result.enforced, false);
+    assert.deepEqual(result.violations, []);
+  });
+
+  it('rejects a bot pull request that deletes a task file', () => {
+    const result = checkPullRequest(
+      bot({
+        changedFiles: ['tasks/0007-someone-elses-idea.md'],
+        taskChanges: [
+          { id: '0007', before: taskText({ status: 'proposed' }), after: null },
+        ],
+      }),
+    );
+    assert.equal(result.enforced, true);
+    assert.deepEqual(
+      result.violations.map((v) => v.rule),
+      ['task-status'],
+    );
+    assert.match(result.violations[0].message, /tasks\/0007: a task file may not be deleted/);
   });
 
   it('passes a clean bot pull request', () => {

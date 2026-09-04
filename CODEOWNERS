@@ -1,0 +1,11 @@
+# Review gate on the guardrails. The machine-checked enforcement is the `pr-rules`
+# status check (harness/src/protected.mjs); this file is the second layer.
+*                        @Oliver-ke
+/.github/                @Oliver-ke
+/infra/                  @Oliver-ke
+/harness/                @Oliver-ke
+/CLAUDE.md               @Oliver-ke
+/CODEOWNERS              @Oliver-ke
+/app/tests/acceptance/   @Oliver-ke
+/package.json            @Oliver-ke
+/package-lock.json       @Oliver-ke

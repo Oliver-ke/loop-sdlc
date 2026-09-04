@@ -9,7 +9,12 @@ const DEFAULT_BOT_AUTHORS = ['claude[bot]', 'github-actions[bot]'];
  */
 export function checkPullRequest(input) {
   const bots = input.botAuthors ?? DEFAULT_BOT_AUTHORS;
-  if (!bots.includes(input.author)) {
+  // Every GitHub App login ends in "[bot]", so this fails CLOSED if the app
+  // identity ever changes: an unrecognised bot is still enforced. Matching only
+  // the hardcoded list would silently leave every pull request from, say,
+  // `loop-driver[bot]` unguarded and green.
+  const isBot = bots.includes(input.author) || /\[bot\]$/.test(input.author);
+  if (!isBot) {
     return { enforced: false, violations: [] };
   }
 
@@ -89,6 +94,22 @@ export function checkPullRequest(input) {
       add(
         'task-status',
         `tasks/${id}: the "Done when" items were rewritten in the same pull request that marks the task done — only the checkboxes may change`,
+      );
+    }
+  }
+
+  // A deleted task file used to slip through everything: with `after === null`
+  // the "proposed" gate and the new-task rule are both skipped, while the
+  // deletion still counts as "changes a task file". That let a bot pull request
+  // clear the human approval queue, or satisfy "every run must record what it
+  // did" by deleting an unrelated task. Only a human may remove a task file.
+  // Kept as its own loop after the others so the violation ordering the tests
+  // above rely on is undisturbed.
+  for (const { id, before, after } of parsed) {
+    if (before !== null && after === null) {
+      add(
+        'task-status',
+        `tasks/${id}: a task file may not be deleted by ${input.author} — only a human may remove a task`,
       );
     }
   }

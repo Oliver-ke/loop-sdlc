@@ -32,7 +32,15 @@ function showOrNull(ref, path) {
 
 try {
   const mergeBase = git('merge-base', values.base, 'HEAD').trim();
-  const changedFiles = git('diff', '--name-only', '-z', `${mergeBase}..HEAD`)
+  // `--no-renames` is load-bearing: with rename detection on (git's default)
+  // a rename reports only its DESTINATION, so `git mv CLAUDE.md
+  // tasks/notes-for-later.md` looks like an unrelated addition and the
+  // protected-path rule never fires — the agent could move its own rules file,
+  // or the human-written acceptance tests, out of the way. With the flag, git
+  // reports the deletion of the source and the addition of the destination as
+  // two separate paths, and the source is checked like any other change.
+  // `-z` is load-bearing too: without it git C-quotes non-ASCII paths.
+  const changedFiles = git('diff', '--name-only', '-z', '--no-renames', `${mergeBase}..HEAD`)
     .split('\0')
     .map((line) => line.trim())
     .filter(Boolean);

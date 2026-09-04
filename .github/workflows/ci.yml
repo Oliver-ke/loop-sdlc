@@ -29,6 +29,22 @@ jobs:
       - name: Typecheck, lint, test, build
         run: npm run verify
 
+  # The guardrail checker is deliberately taken from the BASE ref, not from the
+  # checkout. On a `pull_request` event the checkout is the PR's merge ref, so
+  # running `harness/src/cli/check-pr.mjs` from it would execute the *pull
+  # request's own* copy of protected.mjs/pr-rules.mjs: a bot commit that rewrote
+  # `PROTECTED_PATHS = []` would pass its own audit. The step below extracts
+  # `harness/` from `origin/$BASE_REF` with `git archive` and runs that copy
+  # against this repository instead — a pull request must not supply its own
+  # judge. The checker only reads git objects (diff/show/ls-tree/merge-base), so
+  # it needs the repository as its working directory but none of the PR's files.
+  #
+  # Known and NOT closable here: a pull request can also edit this workflow file
+  # itself (keep the YAML valid, keep the job named `pr-rules`, replace the step
+  # with `exit 0`) and the required check goes green. For a `pull_request` event
+  # the workflow definition comes from the pull request, so no in-repository
+  # check can prevent that; it is handled outside the repo by token permissions.
+  # Do not "fix" it with `pull_request_target`.
   pr-rules:
     name: pr-rules
     runs-on: ubuntu-latest
@@ -57,4 +73,10 @@ jobs:
             exit 0
           fi
           git fetch --no-tags origin "$BASE_REF"
-          node harness/src/cli/check-pr.mjs --base "origin/$BASE_REF" --author "$PR_AUTHOR"
+          # Run the guardrail from the BASE branch, never the pull request's own copy:
+          # a pull request must not be allowed to supply its own judge.
+          rm -rf "$RUNNER_TEMP/base-harness"
+          mkdir -p "$RUNNER_TEMP/base-harness"
+          git archive "origin/$BASE_REF" harness | tar -x -C "$RUNNER_TEMP/base-harness"
+          node "$RUNNER_TEMP/base-harness/harness/src/cli/check-pr.mjs" \
+            --base "origin/$BASE_REF" --author "$PR_AUTHOR"

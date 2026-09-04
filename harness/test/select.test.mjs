@@ -83,4 +83,16 @@ describe('selectTask', () => {
     assert.equal(result.task, null);
     assert.match(result.reasons['0001'], /unknown task 9999/);
   });
+
+  it('blocks an in-progress task with an unfinished dependency even with no claiming pull request', () => {
+    const result = selectTask(
+      [
+        task('0001', { status: 'open' }),
+        task('0002', { status: 'in-progress', dependsOn: ['0001'] }),
+      ],
+      [],
+    );
+    assert.equal(result.task.id, '0001');
+    assert.match(result.reasons['0002'], /0001 is not done/);
+  });
 });

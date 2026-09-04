@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { selectTask, TASK_ID_PATTERN } from '../index.mjs';
+import { taskIdFrom } from '../pr-claim.mjs';
 import { loadTasks } from './validate-tasks.mjs';
 
 const { values } = parseArgs({
@@ -22,13 +23,6 @@ function readOpenPullRequests(file) {
     number: pr.number,
     taskId: taskIdFrom(`${pr.headRefName ?? ''}\n${pr.body ?? ''}`),
   }));
-}
-
-/** A PR claims a task if its branch name or body mentions `task-NNNN` or a task filename. */
-function taskIdFrom(text) {
-  const match =
-    /\btask[-/ ]?(\d{4})\b/i.exec(text) ?? /\btasks\/(\d{4})-[a-z0-9-]+\.md\b/.exec(text);
-  return match ? match[1] : null;
 }
 
 let tasks;

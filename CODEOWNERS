@@ -17,28 +17,12 @@
 /app/package.json        @Oliver-ke
 /.nvmrc                  @Oliver-ke
 
-# Config files are listed at EVERY extension the tool resolves, not just the one
-# in use: a config the agent may add is a config it can use to shadow the one it
-# may not edit.
-/app/vitest.config.mts   @Oliver-ke
-/app/vitest.config.ts    @Oliver-ke
-/app/vitest.config.cts   @Oliver-ke
-/app/vitest.config.js    @Oliver-ke
-/app/vitest.config.cjs   @Oliver-ke
-/app/vitest.config.mjs   @Oliver-ke
-/app/vitest.setup.ts     @Oliver-ke
-/app/vitest.setup.mts    @Oliver-ke
-/app/vitest.setup.js     @Oliver-ke
-/app/vitest.setup.mjs    @Oliver-ke
+# Config files are listed by stem, covering every extension the tool resolves —
+# present or future, not just the ones enumerated here: a config the agent may
+# add is a config it can use to shadow the one it may not edit.
+/app/vitest.config.*     @Oliver-ke
+/app/vitest.setup.*      @Oliver-ke
 /app/tsconfig.json       @Oliver-ke
-/app/eslint.config.mjs   @Oliver-ke
-/app/eslint.config.ts    @Oliver-ke
-/app/eslint.config.js    @Oliver-ke
-/app/eslint.config.cjs   @Oliver-ke
-/app/eslint.config.mts   @Oliver-ke
-/app/eslint.config.cts   @Oliver-ke
-/app/next.config.ts      @Oliver-ke
-/app/next.config.js      @Oliver-ke
-/app/next.config.mjs     @Oliver-ke
-/app/postcss.config.mjs  @Oliver-ke
-/app/postcss.config.js   @Oliver-ke
+/app/eslint.config.*     @Oliver-ke
+/app/next.config.*       @Oliver-ke
+/app/postcss.config.*    @Oliver-ke

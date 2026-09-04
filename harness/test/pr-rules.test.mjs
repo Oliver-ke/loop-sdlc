@@ -85,6 +85,37 @@ describe('isProtectedPath', () => {
       assert.equal(isProtectedPath(shadow), true, `${shadow} must be protected`);
     }
   });
+
+  // A `<stem>.*` entry protects the whole config family by construction, so a
+  // tool gaining a new extension nobody enumerated cannot open a shadowing
+  // hole — including extensions this list never mentions by name.
+  it('protects every config family by stem, at any extension the tool resolves', () => {
+    for (const stem of [
+      'app/vitest.config',
+      'app/vitest.setup',
+      'app/eslint.config',
+      'app/next.config',
+      'app/postcss.config',
+    ]) {
+      for (const ext of ['ts', 'mts', 'cts', 'js', 'mjs', 'cjs']) {
+        assert.equal(isProtectedPath(`${stem}.${ext}`), true, `${stem}.${ext} must be protected`);
+      }
+    }
+    // Previously-missing gaps the enumerated list left open.
+    assert.equal(isProtectedPath('app/postcss.config.cts'), true);
+    assert.equal(isProtectedPath('app/next.config.mts'), true);
+    assert.equal(isProtectedPath('app/vitest.setup.cjs'), true);
+  });
+
+  it('does not match a stem entry by prefix instead of extension', () => {
+    assert.equal(isProtectedPath('app/vitest.config.d/evil.ts'), false);
+    assert.equal(isProtectedPath('app/vitest.config'), false);
+  });
+
+  it('protects app/tsconfig.json exactly, not by stem', () => {
+    assert.equal(isProtectedPath('app/tsconfig.json'), true);
+    assert.equal(isProtectedPath('app/tsconfig.build.json'), false);
+  });
 });
 
 describe('checkPullRequest', () => {
